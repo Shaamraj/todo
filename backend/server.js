@@ -7,11 +7,11 @@ require("dotenv").config();
 
 const app = express();
 
-// ✅ Middlewares
+//  Middlewares
 app.use(express.json());
 app.use(cors());
 
-// ✅ Models
+//  Models
 const User = mongoose.model("User", {
   name: String,
   email: String,
@@ -24,7 +24,7 @@ const Todo = mongoose.model("Todo", {
   completed: Boolean
 });
 
-// ✅ Auth Middleware
+//  Auth Middleware
 const auth = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -132,7 +132,7 @@ app.get("/", (req, res) => {
   res.send("API running");
 });
 
-// ✅ Start Server ONLY after DB connect
+//  Start Server ONLY after DB connect
 const startServer = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
