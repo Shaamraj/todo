@@ -1,0 +1,91 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: #f4f7fb;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-bar h1 {
+  color: #243b55;
+}
+
+.logout-btn {
+  background: crimson;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.task-input-box {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.task-input-box input {
+  flex: 1;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.task-input-box button {
+  background: #243b55;
+  color: white;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tasks-container {
+  margin-top: 30px;
+}
+
+.task-card {
+  background: white;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}
+
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.completed-task {
+  text-decoration: line-through;
+  color: gray;
+}
+
+.delete-btn {
+  background: crimson;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.empty-text {
+  color: gray;
+  text-align: center;
+  margin-top: 40px;
+}
