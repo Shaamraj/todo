@@ -33,8 +33,24 @@ const toggleTask = async (taskId, userId) => {
 
   return task;
 };
+const editTask = async (taskId, userId, text) => {
+  const task = await Task.findOne({
+    _id: taskId,
+    userId
+  });
 
-// ✅ THIS IS VERY IMPORTANT
+  if (!task) {
+    throw new Error("Task not found");
+  }
+
+  task.text = text;
+
+  await task.save();
+
+  return task;
+};
+
+
 module.exports = {
   createTask,
   getTasks,
