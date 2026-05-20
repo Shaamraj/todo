@@ -1,10 +1,10 @@
 const Task = require("../models/Task");
 
 // CREATE
-const createTask = async (userId, text) => {
+const createTask = async (userId, text,dueDate) => {
   if (!text) throw new Error("Task text required");
 
-  const task = await Task.create({ userId, text });
+  const task = await Task.create({ userId, text, dueDate});
   return task;
 };
 
@@ -55,5 +55,6 @@ module.exports = {
   createTask,
   getTasks,
   deleteTask,
-  toggleTask
+  toggleTask,
+  editTask
 };

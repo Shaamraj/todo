@@ -2,16 +2,30 @@ const {
   createTask,
   getTasks,
   deleteTask,
-  toggleTask
+  toggleTask,
+  editTask
 } = require("../services/task.service");
 
 // ADD TASK
 const addTask = async (req, res) => {
   try {
-    const task = await createTask(req.user.id, req.body.text);
+
+    const { text, dueDate } = req.body;
+
+    const task = await createTask(
+      req.user.id,
+      text,
+      dueDate
+    );
+
     res.status(201).json(task);
+
   } catch (error) {
-    res.status(400).json({ message: error.message });
+
+    res.status(400).json({
+      message: error.message
+    });
+
   }
 };
 
@@ -44,10 +58,28 @@ const updateTask = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+//EDIT TASK
+const editTaskText = async (req, res) => {
+  try {
+    const task = await editTask(
+      req.params.id,
+      req.user.id,
+      req.body.text
+    );
+
+    res.json(task);
+
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    });
+  }
+};
 
 module.exports = {
   addTask,
   fetchTasks,
   removeTask,
-  updateTask
+  updateTask,
+  editTaskText
 };
