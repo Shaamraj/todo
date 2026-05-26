@@ -7,7 +7,11 @@ const taskRoutes = require("./routes/taskRoutes");
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://todo-ten-alpha-58.vercel.app/"
+  })
+);
 app.use(express.json());
 
 // Routes
