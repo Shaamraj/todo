@@ -27,7 +27,7 @@ export default function Dashboard() {
     try {
 
       const res = await fetch(
-        "http://localhost:5000/api/tasks",
+        "https://todo-11qz.onrender.com/api/tasks",
         {
           headers: {
             Authorization: "Bearer " + token
@@ -52,7 +52,7 @@ export default function Dashboard() {
     try {
 
       const res = await fetch(
-        "http://localhost:5000/api/tasks",
+        "https://todo-11qz.onrender.com/api/tasks",
         {
           method: "POST",
           headers: {
@@ -61,7 +61,9 @@ export default function Dashboard() {
           },
           body: JSON.stringify({
             text,
-            dueDate
+            dueDate: dueDate
+              ? new Date(dueDate).toISOString()
+              : null
           })
         }
       );
@@ -84,7 +86,7 @@ export default function Dashboard() {
     try {
 
       await fetch(
-        `http://localhost:5000/api/tasks/${id}`,
+        `https://todo-11qz.onrender.com/api/tasks/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -108,7 +110,7 @@ export default function Dashboard() {
     try {
 
       const res = await fetch(
-        `http://localhost:5000/api/tasks/${id}`,
+        `https://todo-11qz.onrender.com/api/tasks/${id}`,
         {
           method: "PUT",
           headers: {
@@ -138,7 +140,7 @@ export default function Dashboard() {
     try {
 
       const res = await fetch(
-        `http://localhost:5000/api/tasks/edit/${id}`,
+        `https://todo-11qz.onrender.com/api/tasks/edit/${id}`,
         {
           method: "PUT",
           headers: {
@@ -148,6 +150,8 @@ export default function Dashboard() {
           body: JSON.stringify({
             text: editText,
             dueDate: editDueDate
+              ? new Date(editDueDate).toISOString()
+              : null
           })
         }
       );
@@ -247,7 +251,8 @@ export default function Dashboard() {
             const isOverdue =
               task.dueDate &&
               !task.completed &&
-              new Date(task.dueDate) < new Date();
+              Date.now() >
+                new Date(task.dueDate).getTime();
 
             return (
 
@@ -354,6 +359,7 @@ export default function Dashboard() {
                           </p>
 
                         )}
+
                       </>
 
                     )}
@@ -377,7 +383,10 @@ export default function Dashboard() {
 
                         setEditDueDate(
                           task.dueDate
-                            ? task.dueDate.slice(0, 16)
+                            ? new Date(task.dueDate)
+                                .toLocaleString("sv-SE")
+                                .replace(" ", "T")
+                                .slice(0, 16)
                             : ""
                         );
                       }}
