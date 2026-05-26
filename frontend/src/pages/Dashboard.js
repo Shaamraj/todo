@@ -9,8 +9,18 @@ export default function Dashboard() {
 
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
+  const [editDueDate, setEditDueDate] = useState("");
 
   const token = localStorage.getItem("token");
+  const userName = localStorage.getItem("name");
+
+  // LOCAL TIME FORMAT
+  const minDateTime = new Date(
+    Date.now() -
+    new Date().getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .slice(0, 16);
 
   // FETCH TASKS
   const fetchTasks = async () => {
@@ -70,6 +80,7 @@ export default function Dashboard() {
 
   // DELETE TASK
   const deleteTask = async (id) => {
+
     try {
 
       await fetch(
@@ -93,6 +104,7 @@ export default function Dashboard() {
 
   // TOGGLE TASK
   const toggleTask = async (id) => {
+
     try {
 
       const res = await fetch(
@@ -122,6 +134,7 @@ export default function Dashboard() {
 
   // EDIT TASK
   const editTask = async (id) => {
+
     try {
 
       const res = await fetch(
@@ -133,7 +146,8 @@ export default function Dashboard() {
             Authorization: "Bearer " + token
           },
           body: JSON.stringify({
-            text: editText
+            text: editText,
+            dueDate: editDueDate
           })
         }
       );
@@ -150,6 +164,7 @@ export default function Dashboard() {
 
       setEditId(null);
       setEditText("");
+      setEditDueDate("");
 
     } catch (err) {
       console.log(err);
@@ -158,7 +173,10 @@ export default function Dashboard() {
 
   // LOGOUT
   const logout = () => {
+
     localStorage.removeItem("token");
+    localStorage.removeItem("name");
+
     window.location.href = "/";
   };
 
@@ -173,7 +191,9 @@ export default function Dashboard() {
       {/* TOP BAR */}
       <div className="top-bar">
 
-        <h1>TODO Dashboard</h1>
+        <h1>
+          Welcome, {userName}
+        </h1>
 
         <button
           className="logout-btn"
@@ -199,6 +219,7 @@ export default function Dashboard() {
         <input
           type="datetime-local"
           value={dueDate}
+          min={minDateTime}
           onChange={(e) =>
             setDueDate(e.target.value)
           }
@@ -263,14 +284,40 @@ export default function Dashboard() {
                           }
                         />
 
-                        <button
-                          className="save-btn"
-                          onClick={() =>
-                            editTask(task._id)
+                        <input
+                          type="datetime-local"
+                          value={editDueDate}
+                          min={minDateTime}
+                          onChange={(e) =>
+                            setEditDueDate(
+                              e.target.value
+                            )
                           }
-                        >
-                          Save
-                        </button>
+                        />
+
+                        <div className="edit-actions">
+
+                          <button
+                            className="save-btn"
+                            onClick={() =>
+                              editTask(task._id)
+                            }
+                          >
+                            Save
+                          </button>
+
+                          <button
+                            className="cancel-btn"
+                            onClick={() => {
+                              setEditId(null);
+                              setEditText("");
+                              setEditDueDate("");
+                            }}
+                          >
+                            Cancel
+                          </button>
+
+                        </div>
 
                       </div>
 
@@ -288,17 +335,24 @@ export default function Dashboard() {
                         </span>
 
                         <p className="due-date">
+
                           {task.dueDate
                             ? `Due: ${new Date(
                                 task.dueDate
-                              ).toLocaleString()}`
+                              ).toLocaleString([], {
+                                dateStyle: "medium",
+                                timeStyle: "short"
+                              })}`
                             : "No deadline"}
+
                         </p>
 
                         {isOverdue && (
+
                           <p className="overdue-text">
                             OVERDUE
                           </p>
+
                         )}
                       </>
 
@@ -309,28 +363,40 @@ export default function Dashboard() {
                 </div>
 
                 {/* RIGHT */}
-                <div className="task-actions">
+                {editId !== task._id && (
 
-                  <button
-                    className="edit-btn"
-                    onClick={() => {
-                      setEditId(task._id);
-                      setEditText(task.text);
-                    }}
-                  >
-                    Edit
-                  </button>
+                  <div className="task-actions">
 
-                  <button
-                    className="delete-btn"
-                    onClick={() =>
-                      deleteTask(task._id)
-                    }
-                  >
-                    Delete
-                  </button>
+                    <button
+                      className="edit-btn"
+                      onClick={() => {
 
-                </div>
+                        setEditId(task._id);
+
+                        setEditText(task.text);
+
+                        setEditDueDate(
+                          task.dueDate
+                            ? task.dueDate.slice(0, 16)
+                            : ""
+                        );
+                      }}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() =>
+                        deleteTask(task._id)
+                      }
+                    >
+                      Delete
+                    </button>
+
+                  </div>
+
+                )}
 
               </div>
             );

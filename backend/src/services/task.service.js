@@ -33,7 +33,7 @@ const toggleTask = async (taskId, userId) => {
 
   return task;
 };
-const editTask = async (taskId, userId, text) => {
+const editTask = async (taskId, userId, text, dueDate) => {
   const task = await Task.findOne({
     _id: taskId,
     userId
@@ -44,7 +44,7 @@ const editTask = async (taskId, userId, text) => {
   }
 
   task.text = text;
-
+  task.dueDate = dueDate;
   await task.save();
 
   return task;

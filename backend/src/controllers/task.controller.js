@@ -64,7 +64,8 @@ const editTaskText = async (req, res) => {
     const task = await editTask(
       req.params.id,
       req.user.id,
-      req.body.text
+      req.body.text,
+      req.body.dueDate
     );
 
     res.json(task);

@@ -19,8 +19,12 @@ body {
 }
 
 .top-bar h1 {
-  color: #f7f2f2;
+  color: white;
+  font-size: 28px;
+  margin: 0;
 }
+
+/* LOGOUT BUTTON */
 
 .logout-btn {
   background-color: #ff4d4d;
@@ -70,13 +74,15 @@ body {
   background-color: #1d4ed8;
 }
 
-/* TASKS */
+/* TASK LIST */
 
 .tasks-container {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
+
+/* TASK CARD */
 
 .task-card {
   background: white;
@@ -98,6 +104,13 @@ body {
 .task-details {
   display: flex;
   flex-direction: column;
+  width: 100%;
+}
+
+.task-details span {
+  font-size: 16px;
+  font-weight: 600;
+  word-break: break-word;
 }
 
 .completed-task {
@@ -105,11 +118,15 @@ body {
   color: gray;
 }
 
+/* DUE DATE */
+
 .due-date {
   margin-top: 5px;
   font-size: 13px;
   color: #666;
 }
+
+/* OVERDUE */
 
 .overdue-text {
   color: red;
@@ -118,20 +135,32 @@ body {
   margin-top: 4px;
 }
 
-/* EDIT BOX */
+/* EDIT SECTION */
 
 .edit-box {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-top: 8px;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .edit-box input {
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 14px;
 }
+
+/* EDIT BUTTON GROUP */
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+/* SAVE BUTTON */
 
 .save-btn {
   background-color: #10b981;
@@ -147,7 +176,23 @@ body {
   background-color: #059669;
 }
 
-/* BUTTON GROUP */
+/* CANCEL BUTTON */
+
+.cancel-btn {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cancel-btn:hover {
+  background-color: #4b5563;
+}
+
+/* RIGHT SIDE BUTTONS */
 
 .task-actions {
   display: flex;
@@ -187,7 +232,7 @@ body {
   background-color: #dc2626;
 }
 
-/* EMPTY TEXT */
+/* EMPTY TASK TEXT */
 
 .empty-text {
   color: gray;

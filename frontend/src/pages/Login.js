@@ -23,6 +23,7 @@ export default function Login() {
       }
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("name", data.user.name);
       window.location.href = "/dashboard";
 
     } catch (err) {
