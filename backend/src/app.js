@@ -9,7 +9,7 @@ const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: "https://todo-ten-alpha-58.vercel.app/"
+    origin: "https://todo-ten-alpha-58.vercel.app"
   })
 );
 app.use(express.json());
