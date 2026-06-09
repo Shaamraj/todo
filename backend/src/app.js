@@ -9,12 +9,10 @@ const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://todo-ten-alpha-58.vercel.app"
-    ]
+    origin: "https://todo-ten-alpha-58.vercel.app"
   })
 );
+app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
