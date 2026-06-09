@@ -10,7 +10,39 @@ const createTask = async (userId, text,dueDate) => {
 
 // READ
 const getTasks = async (userId) => {
-  return await Task.find({ userId }).sort({ createdAt: -1 });
+
+  const tasks = await Task.find({ userId });
+
+  tasks.sort((a, b) => {
+
+    // Pending tasks first
+    if (a.completed !== b.completed) {
+      return a.completed - b.completed;
+    }
+
+    // Both have no due date
+    if (!a.dueDate && !b.dueDate) {
+      return 0;
+    }
+
+    // No due date goes to bottom
+    if (!a.dueDate) {
+      return 1;
+    }
+
+    if (!b.dueDate) {
+      return -1;
+    }
+
+    // Nearest deadline first
+    return (
+      new Date(a.dueDate) -
+      new Date(b.dueDate)
+    );
+
+  });
+
+  return tasks;
 };
 
 // DELETE

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
-
   const [tasks, setTasks] = useState([]);
   const [text, setText] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -14,10 +13,23 @@ export default function Dashboard() {
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("name");
 
-  // LOCAL TIME FORMAT
+  const timeZone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const shortZone = new Date()
+    .toLocaleTimeString("en-US", {
+      timeZoneName: "short"
+    })
+    .split(" ")
+    .pop();
+
+  const now = new Date();
+
+  now.setMinutes(now.getMinutes() + 5);
+
   const minDateTime = new Date(
-    Date.now() -
-    new Date().getTimezoneOffset() * 60000
+    now.getTime() -
+      now.getTimezoneOffset() * 60000
   )
     .toISOString()
     .slice(0, 16);
@@ -25,7 +37,6 @@ export default function Dashboard() {
   // FETCH TASKS
   const fetchTasks = async () => {
     try {
-
       const res = await fetch(
         "https://todo-11qz.onrender.com/api/tasks",
         {
@@ -38,7 +49,6 @@ export default function Dashboard() {
       const data = await res.json();
 
       setTasks(data);
-
     } catch (err) {
       console.log(err);
     }
@@ -46,12 +56,20 @@ export default function Dashboard() {
 
   // ADD TASK
   const addTask = async () => {
-
     if (!text.trim()) return;
 
-    try {
+    if (
+      dueDate &&
+      new Date(dueDate) < new Date()
+    ) {
+      alert(
+        "Please select a future date and time"
+      );
+      return;
+    }
 
-      const res = await fetch(
+    try {
+      await fetch(
         "https://todo-11qz.onrender.com/api/tasks",
         {
           method: "POST",
@@ -68,13 +86,10 @@ export default function Dashboard() {
         }
       );
 
-      const data = await res.json();
-
-      setTasks([data, ...tasks]);
-
       setText("");
       setDueDate("");
 
+      fetchTasks();
     } catch (err) {
       console.log(err);
     }
@@ -82,9 +97,7 @@ export default function Dashboard() {
 
   // DELETE TASK
   const deleteTask = async (id) => {
-
     try {
-
       await fetch(
         `https://todo-11qz.onrender.com/api/tasks/${id}`,
         {
@@ -95,10 +108,7 @@ export default function Dashboard() {
         }
       );
 
-      setTasks(
-        tasks.filter((task) => task._id !== id)
-      );
-
+      fetchTasks();
     } catch (err) {
       console.log(err);
     }
@@ -106,10 +116,8 @@ export default function Dashboard() {
 
   // TOGGLE TASK
   const toggleTask = async (id) => {
-
     try {
-
-      const res = await fetch(
+      await fetch(
         `https://todo-11qz.onrender.com/api/tasks/${id}`,
         {
           method: "PUT",
@@ -119,16 +127,7 @@ export default function Dashboard() {
         }
       );
 
-      const updatedTask = await res.json();
-
-      setTasks(
-        tasks.map((task) =>
-          task._id === id
-            ? updatedTask
-            : task
-        )
-      );
-
+      fetchTasks();
     } catch (err) {
       console.log(err);
     }
@@ -136,10 +135,18 @@ export default function Dashboard() {
 
   // EDIT TASK
   const editTask = async (id) => {
+    if (
+      editDueDate &&
+      new Date(editDueDate) < new Date()
+    ) {
+      alert(
+        "Please select a future date and time"
+      );
+      return;
+    }
 
     try {
-
-      const res = await fetch(
+      await fetch(
         `https://todo-11qz.onrender.com/api/tasks/edit/${id}`,
         {
           method: "PUT",
@@ -156,20 +163,11 @@ export default function Dashboard() {
         }
       );
 
-      const updatedTask = await res.json();
-
-      setTasks(
-        tasks.map((task) =>
-          task._id === id
-            ? updatedTask
-            : task
-        )
-      );
-
       setEditId(null);
       setEditText("");
       setEditDueDate("");
 
+      fetchTasks();
     } catch (err) {
       console.log(err);
     }
@@ -177,7 +175,6 @@ export default function Dashboard() {
 
   // LOGOUT
   const logout = () => {
-
     localStorage.removeItem("token");
     localStorage.removeItem("name");
 
@@ -191,13 +188,23 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-
       {/* TOP BAR */}
       <div className="top-bar">
+        <div>
+          <h1>
+            Welcome, {userName}
+          </h1>
 
-        <h1>
-          Welcome, {userName}
-        </h1>
+          <p
+            style={{
+              color: "white",
+              margin: "5px 0 0 0",
+              fontSize: "14px"
+            }}
+          >
+            Time Zone: {shortZone} • {timeZone}
+          </p>
+        </div>
 
         <button
           className="logout-btn"
@@ -205,12 +212,10 @@ export default function Dashboard() {
         >
           Logout
         </button>
-
       </div>
 
       {/* INPUT SECTION */}
       <div className="task-input-box">
-
         <input
           type="text"
           placeholder="Enter task..."
@@ -232,22 +237,16 @@ export default function Dashboard() {
         <button onClick={addTask}>
           Add Task
         </button>
-
       </div>
 
       {/* TASKS */}
       <div className="tasks-container">
-
         {tasks.length === 0 ? (
-
           <p className="empty-text">
             No tasks added yet
           </p>
-
         ) : (
-
           tasks.map((task) => {
-
             const isOverdue =
               task.dueDate &&
               !task.completed &&
@@ -255,15 +254,11 @@ export default function Dashboard() {
                 new Date(task.dueDate).getTime();
 
             return (
-
               <div
                 className="task-card"
                 key={task._id}
               >
-
-                {/* LEFT */}
                 <div className="task-left">
-
                   <input
                     type="checkbox"
                     checked={task.completed}
@@ -273,12 +268,8 @@ export default function Dashboard() {
                   />
 
                   <div className="task-details">
-
-                    {/* EDIT MODE */}
                     {editId === task._id ? (
-
                       <div className="edit-box">
-
                         <input
                           type="text"
                           value={editText}
@@ -301,7 +292,6 @@ export default function Dashboard() {
                         />
 
                         <div className="edit-actions">
-
                           <button
                             className="save-btn"
                             onClick={() =>
@@ -321,13 +311,9 @@ export default function Dashboard() {
                           >
                             Cancel
                           </button>
-
                         </div>
-
                       </div>
-
                     ) : (
-
                       <>
                         <span
                           className={
@@ -340,52 +326,49 @@ export default function Dashboard() {
                         </span>
 
                         <p className="due-date">
-
                           {task.dueDate
                             ? `Due: ${new Date(
                                 task.dueDate
                               ).toLocaleString([], {
-                                dateStyle: "medium",
-                                timeStyle: "short"
+                                dateStyle:
+                                  "medium",
+                                timeStyle:
+                                  "short"
                               })}`
                             : "No deadline"}
-
                         </p>
 
                         {isOverdue && (
-
                           <p className="overdue-text">
                             OVERDUE
                           </p>
-
                         )}
-
                       </>
-
                     )}
-
                   </div>
-
                 </div>
 
-                {/* RIGHT */}
                 {editId !== task._id && (
-
                   <div className="task-actions">
-
                     <button
                       className="edit-btn"
                       onClick={() => {
-
                         setEditId(task._id);
 
                         setEditText(task.text);
 
                         setEditDueDate(
                           task.dueDate
-                            ? new Date(task.dueDate)
-                                .toLocaleString("sv-SE")
-                                .replace(" ", "T")
+                            ? new Date(
+                                task.dueDate
+                              )
+                                .toLocaleString(
+                                  "sv-SE"
+                                )
+                                .replace(
+                                  " ",
+                                  "T"
+                                )
                                 .slice(0, 16)
                             : ""
                         );
@@ -402,18 +385,13 @@ export default function Dashboard() {
                     >
                       Delete
                     </button>
-
                   </div>
-
                 )}
-
               </div>
             );
           })
         )}
-
       </div>
-
     </div>
   );
 }
