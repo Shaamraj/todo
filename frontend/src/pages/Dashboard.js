@@ -13,15 +13,11 @@ export default function Dashboard() {
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("name");
 
-  const timeZone =
-    Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  const shortZone = new Date()
-    .toLocaleTimeString("en-US", {
-      timeZoneName: "short"
-    })
-    .split(" ")
-    .pop();
+  const currentUTC =
+  new Date()
+    .toISOString()
+    .slice(0, 16)
+    .replace("T", " ") + " UTC";
 
   const now = new Date();
 
@@ -48,11 +44,28 @@ export default function Dashboard() {
 
       const data = await res.json();
 
-      setTasks(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+        setTasks(
+          data.sort((a, b) => {
+            // Pending tasks first
+            if (a.completed !== b.completed) {
+              return a.completed - b.completed;
+            }
+
+            // Tasks without due date go to bottom
+            if (!a.dueDate) return 1;
+            if (!b.dueDate) return -1;
+
+            // Nearest deadline first
+            return (
+              new Date(a.dueDate) -
+              new Date(b.dueDate)
+            );
+          })
+        );
+            } catch (err) {
+              console.log(err);
+            }
+          };
 
   // ADD TASK
   const addTask = async () => {
@@ -195,14 +208,14 @@ export default function Dashboard() {
             Welcome, {userName}
           </h1>
 
-          <p
+         <p
             style={{
               color: "white",
               margin: "5px 0 0 0",
               fontSize: "14px"
             }}
           >
-            Time Zone: {shortZone} • {timeZone}
+            Current UTC: {currentUTC}
           </p>
         </div>
 
@@ -326,17 +339,12 @@ export default function Dashboard() {
                         </span>
 
                         <p className="due-date">
-                          {task.dueDate
-                            ? `Due: ${new Date(
-                                task.dueDate
-                              ).toLocaleString([], {
-                                dateStyle:
-                                  "medium",
-                                timeStyle:
-                                  "short"
-                              })}`
-                            : "No deadline"}
-                        </p>
+                            {task.dueDate
+                              ? `Due (UTC): ${new Date(
+                                  task.dueDate
+                                ).toUTCString()}`
+                              : "No deadline"}
+                          </p>
 
                         {isOverdue && (
                           <p className="overdue-text">
