@@ -9,7 +9,7 @@ export default function Dashboard() {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [editDueDate, setEditDueDate] = useState("");
-
+  const [, setCurrentTime] = useState(Date.now());
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("name");
 
@@ -198,7 +198,14 @@ export default function Dashboard() {
     fetchTasks();
     // eslint-disable-next-line
   }, []);
+  
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentTime(Date.now());
+  }, 60000);
 
+  return () => clearInterval(interval);
+}, []);
   return (
     <div className="dashboard-container">
       {/* TOP BAR */}

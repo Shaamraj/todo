@@ -77,6 +77,7 @@ const editTask = async (taskId, userId, text, dueDate) => {
 
   task.text = text;
   task.dueDate = dueDate;
+  task.reminderSent = false;
   await task.save();
 
   return task;
