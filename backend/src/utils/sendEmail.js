@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-
+console.log("=== BREVO FILE LOADED ===");
 console.log("BREVO_USER =", process.env.BREVO_USER);
 console.log("BREVO_PASS exists =", !!process.env.BREVO_PASS);
 const transporter = nodemailer.createTransport({
