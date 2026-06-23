@@ -9,16 +9,12 @@ export default function Dashboard() {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [editDueDate, setEditDueDate] = useState("");
-  const [, setCurrentTime] = useState(Date.now());
+  const [currentTime, setCurrentTime] = useState(
+    new Date().toLocaleString()
+  );
+
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("name");
-
-  const currentUTC =
-  new Date()
-    .toISOString()
-    .slice(0, 16)
-    .replace("T", " ") + " UTC";
-
   const now = new Date();
 
   now.setMinutes(now.getMinutes() + 5);
@@ -200,12 +196,14 @@ export default function Dashboard() {
   }, []);
   
   useEffect(() => {
-  const interval = setInterval(() => {
-    setCurrentTime(Date.now());
-  }, 60000);
+    const interval = setInterval(() => {
+      setCurrentTime(
+        new Date().toLocaleString()
+      );
+    }, 60000);
 
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="dashboard-container">
       {/* TOP BAR */}
@@ -222,7 +220,7 @@ export default function Dashboard() {
               fontSize: "14px"
             }}
           >
-            Current UTC: {currentUTC}
+            Current Time: {currentTime}
           </p>
         </div>
 
@@ -233,7 +231,44 @@ export default function Dashboard() {
           Logout
         </button>
       </div>
+<div className="stats-container">
 
+  <div className="stat-card">
+    <div className="stat-number">
+      {tasks.length}
+    </div>
+    <div className="stat-label">
+      Total Tasks
+    </div>
+  </div>
+
+  <div className="stat-card">
+    <div className="stat-number">
+      {
+        tasks.filter(
+          task => !task.completed
+        ).length
+      }
+    </div>
+    <div className="stat-label">
+      Pending
+    </div>
+  </div>
+
+  <div className="stat-card">
+    <div className="stat-number">
+      {
+        tasks.filter(
+          task => task.completed
+        ).length
+      }
+    </div>
+    <div className="stat-label">
+      Completed
+    </div>
+  </div>
+
+</div>
       {/* INPUT SECTION */}
       <div className="task-input-box">
         <input
@@ -347,11 +382,11 @@ export default function Dashboard() {
 
                         <p className="due-date">
                             {task.dueDate
-                              ? `Due (UTC): ${new Date(
+                              ? `Due: ${new Date(
                                   task.dueDate
-                                ).toUTCString()}`
+                                ).toLocaleString()}`
                               : "No deadline"}
-                          </p>
+                        </p>
 
                         {isOverdue && (
                           <p className="overdue-text">
