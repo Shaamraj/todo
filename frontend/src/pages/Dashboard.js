@@ -454,7 +454,21 @@ export default function Dashboard() {
             );
           })
         )}
-      </div>
+            </div>
     </div>
+
+    <div className="calendar-container">
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 700 }}
+      />
+    </div>
+
+  </div>
+</div>
   );
 }
+
