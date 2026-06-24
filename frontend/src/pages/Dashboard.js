@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../styles/dashboard.css";
-
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [text, setText] = useState("");
@@ -15,6 +17,15 @@ export default function Dashboard() {
 
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("name");
+  const localizer = momentLocalizer(moment);
+
+  const events = tasks
+    .filter(task => task.dueDate)
+    .map(task => ({
+      title: task.text,
+      start: new Date(task.dueDate),
+      end: new Date(task.dueDate)
+    }));
   const now = new Date();
 
   now.setMinutes(now.getMinutes() + 5);
@@ -295,7 +306,9 @@ export default function Dashboard() {
       </div>
 
       {/* TASKS */}
-      <div className="tasks-container">
+      <div className="dashboard-content">
+        <div className="tasks-side">
+          <div className="tasks-container">
         {tasks.length === 0 ? (
           <p className="empty-text">
             No tasks added yet
