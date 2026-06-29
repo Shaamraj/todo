@@ -6,6 +6,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [text, setText] = useState("");
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
   const [dueDate, setDueDate] = useState("");
 
   const [editId, setEditId] = useState(null);
@@ -20,12 +22,13 @@ export default function Dashboard() {
   const localizer = momentLocalizer(moment);
 
   const events = tasks
-    .filter(task => task.dueDate)
-    .map(task => ({
-      title: task.text,
-      start: new Date(task.dueDate),
-      end: new Date(task.dueDate)
-    }));
+  .filter(task => task.dueDate)
+  .map(task => ({
+    title: task.text,
+    start: new Date(task.dueDate),
+    end: new Date(task.dueDate),
+    resource: task
+  }));
   const now = new Date();
 
   now.setMinutes(now.getMinutes() + 5);
@@ -278,7 +281,21 @@ export default function Dashboard() {
       Completed
     </div>
   </div>
-
+  <div className="search-box">
+  <input
+    type="text"
+    placeholder="🔍 Search tasks..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+</div>
+  <div className="filter-buttons">
+  <button onClick={() => setFilter("all")}>All</button>
+  <button onClick={() => setFilter("pending")}>Pending</button>
+  <button onClick={() => setFilter("completed")}>Completed</button>
+  <button onClick={() => setFilter("today")}>Today</button>
+  <button onClick={() => setFilter("overdue")}>Overdue</button>
+</div>
 </div>
       {/* INPUT SECTION */}
       <div className="task-input-box">
@@ -314,12 +331,38 @@ export default function Dashboard() {
             No tasks added yet
           </p>
         ) : (
-          tasks.map((task) => {
-            const isOverdue =
-              task.dueDate &&
-              !task.completed &&
-              Date.now() >
-                new Date(task.dueDate).getTime();
+          tasks
+            .filter(task =>
+              task.text.toLowerCase().includes(search.toLowerCase())
+            )
+            .filter(task => {
+              if (filter === "pending") return !task.completed;
+              if (filter === "completed") return task.completed;
+
+              if (filter === "overdue")
+                return task.dueDate &&
+                  !task.completed &&
+                  new Date(task.dueDate) < new Date();
+
+              if (filter === "today") {
+                if (!task.dueDate) return false;
+
+                const today = new Date();
+                const due = new Date(task.dueDate);
+
+                return (
+                  today.toDateString() === due.toDateString()
+                );
+              }
+
+              return true;
+            })
+              .map((task) => {
+                const isOverdue =
+                  task.dueDate &&
+                  !task.completed &&
+                  Date.now() >
+                    new Date(task.dueDate).getTime();
 
             return (
               <div
@@ -459,12 +502,44 @@ export default function Dashboard() {
 
     <div className="calendar-container">
       <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 700 }}
-      />
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+
+          eventPropGetter={(event) => {
+            let background = "#2563eb"; // Blue
+
+            // Completed
+            if (event.resource.completed) {
+              background = "#22c55e";
+            }
+
+            // Overdue
+            else if (new Date(event.resource.dueDate) < new Date()) {
+              background = "#ef4444";
+            }
+
+            // Due Today
+            else if (
+              new Date(event.resource.dueDate).toDateString() ===
+              new Date().toDateString()
+            ) {
+              background = "#f59e0b";
+            }
+
+            return {
+              style: {
+                backgroundColor: background,
+                borderRadius: "6px",
+                border: "none",
+                color: "white"
+              }
+            };
+          }}
+
+          style={{ height: 700 }}
+        />
     </div>
 
   </div>
