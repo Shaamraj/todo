@@ -513,21 +513,20 @@ export default function Dashboard() {
           events={events}
           startAccessor="start"
           endAccessor="end"
-
           eventPropGetter={(event) => {
-              console.log(event);
-
-              return {
-                style: {
-                  backgroundColor: "red",
-                  color: "white",
-                  border: "none"
-                }
-              };
-            }}
-
+            return {
+              style: {
+                backgroundColor: "red",
+                color: "white",
+                border: "none",
+                borderRadius: "6px"
+              }
+            };
+          }}
           style={{ height: 700 }}
         />
+          
+        
     </div>
 
   </div>

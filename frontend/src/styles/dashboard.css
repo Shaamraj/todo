@@ -361,3 +361,7 @@ cursor:pointer;
 .filter-buttons button:hover{
 background:#1d4ed8;
 }
+.my-event {
+  background: red !important;
+  color: white !important;
+}
