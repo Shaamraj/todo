@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../styles/dashboard.css";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [text, setText] = useState("");
@@ -19,22 +20,23 @@ export default function Dashboard() {
 
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("name");
-  const localizer = momentLocalizer(moment);
+  
 
   const events = tasks
   .filter(task => task.dueDate)
   .map(task => ({
+    id: task._id,
     title: task.text,
-    start: new Date(task.dueDate),
-    end: new Date(new Date(task.dueDate).getTime() + 60 * 60 * 1000),
+    start: task.dueDate,
 
-    resource: {
-      completed: task.completed,
-      dueDate: task.dueDate,
-      overdue:
-        !task.completed &&
-        new Date(task.dueDate) < new Date()
-    }
+    color: task.completed
+      ? "#22c55e"
+      : new Date(task.dueDate) < new Date()
+      ? "#ef4444"
+      : new Date(task.dueDate).toDateString() ===
+        new Date().toDateString()
+      ? "#f59e0b"
+      : "#2563eb"
   }));
   const now = new Date();
 
@@ -508,23 +510,29 @@ export default function Dashboard() {
     </div>
 
     <div className="calendar-container">
-      <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          eventPropGetter={(event) => {
-            return {
-              style: {
-                backgroundColor: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "6px"
-              }
-            };
-          }}
-          style={{ height: 700 }}
-        />
+     <FullCalendar
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              interactionPlugin
+            ]}
+
+            initialView="dayGridMonth"
+
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay"
+            }}
+
+            events={events}
+
+            editable={false}
+
+            selectable={true}
+
+            height="700px"
+          />
           
         
     </div>
