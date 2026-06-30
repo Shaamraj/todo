@@ -26,8 +26,15 @@ export default function Dashboard() {
   .map(task => ({
     title: task.text,
     start: new Date(task.dueDate),
-    end: new Date(task.dueDate),
-    resource: task
+    end: new Date(new Date(task.dueDate).getTime() + 60 * 60 * 1000),
+
+    resource: {
+      completed: task.completed,
+      dueDate: task.dueDate,
+      overdue:
+        !task.completed &&
+        new Date(task.dueDate) < new Date()
+    }
   }));
   const now = new Date();
 
@@ -507,33 +514,26 @@ export default function Dashboard() {
           startAccessor="start"
           endAccessor="end"
 
-          eventPropGetter={(event) => {
-            let background = "#2563eb"; // Blue
+          eeventPropGetter={(event) => {
+            let background = "#2563eb"; // Default Blue
 
-            // Completed
             if (event.resource.completed) {
-              background = "#22c55e";
-            }
-
-            // Overdue
-            else if (new Date(event.resource.dueDate) < new Date()) {
-              background = "#ef4444";
-            }
-
-            // Due Today
-            else if (
+              background = "#22c55e"; // Green
+            } else if (event.resource.overdue) {
+              background = "#ef4444"; // Red
+            } else if (
               new Date(event.resource.dueDate).toDateString() ===
               new Date().toDateString()
             ) {
-              background = "#f59e0b";
+              background = "#f59e0b"; // Orange
             }
 
             return {
               style: {
                 backgroundColor: background,
-                borderRadius: "6px",
+                color: "white",
                 border: "none",
-                color: "white"
+                borderRadius: "6px"
               }
             };
           }}
