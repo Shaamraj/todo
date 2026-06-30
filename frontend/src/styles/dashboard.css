@@ -76,12 +76,22 @@ body {
 
 /* TASK LIST */
 
-.tasks-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.tasks-container{
+display:flex;
+flex-direction:column;
+gap:15px;
+max-height:760px;
+overflow-y:auto;
+padding-right:8px;
+}
+.tasks-container::-webkit-scrollbar{
+width:8px;
 }
 
+.tasks-container::-webkit-scrollbar-thumb{
+background:#2563eb;
+border-radius:10px;
+}
 /* TASK CARD */
 
 .task-card {
@@ -280,88 +290,78 @@ body {
   width: 100%;
 }
 
+
 /* RIGHT SIDE CALENDAR */
 
 .calendar-container {
   background: white;
   border-radius: 12px;
   padding: 15px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.08);
-  min-height: 750px;
+  box-shadow: 0px 2px 10px rgba(0,0,0,.08);
+  height: 780px;
+  overflow: hidden;
 }
 
 /* CALENDAR STYLING */
 
-.rbc-calendar {
-  height: 700px !important;
+.fc {
+  font-family: Arial, sans-serif;
 }
 
-.rbc-toolbar {
-  margin-bottom: 20px;
+.fc-toolbar-title {
+  font-size: 22px;
+  font-weight: bold;
 }
 
-.rbc-toolbar button {
-  border-radius: 8px;
-}
-
-.rbc-event {
+.fc-button {
   background: #2563eb !important;
   border: none !important;
-  border-radius: 6px !important;
 }
 
-.rbc-today {
-  background-color: #eef4ff !important;
+.fc-button:hover {
+  background: #1d4ed8 !important;
 }
 
-/* RESPONSIVE */
-
-@media (max-width: 1000px) {
-  .dashboard-content {
-    grid-template-columns: 1fr;
-  }
-
-  .calendar-container {
-    min-height: 600px;
-  }
-}
-.search-box {
-  margin-bottom: 20px;
+.fc-daygrid-event {
+  border-radius: 6px;
+  font-weight: 600;
 }
 
-.search-box input {
-  width: 100%;
-  padding: 14px 18px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-size: 15px;
-  box-sizing: border-box;
+.fc-day-today {
+  background: #eef4ff !important;
 }
-
-.search-box input:focus {
-  outline: none;
-  border-color: #2563eb;
-}
-.filter-buttons{
+.summary-container{
 display:flex;
-gap:10px;
-margin:15px 0;
-flex-wrap:wrap;
+flex-direction:column;
+gap:20px;
 }
 
-.filter-buttons button{
-padding:8px 15px;
-border:none;
-border-radius:8px;
-background:#2563eb;
-color:white;
-cursor:pointer;
+.summary-box{
+background:white;
+padding:18px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
 }
 
-.filter-buttons button:hover{
-background:#1d4ed8;
+.summary-box h3{
+margin:0 0 15px;
+font-size:18px;
 }
-.my-event {
-  background: red !important;
-  color: white !important;
+
+.summary-task{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid #eee;
+}
+
+.summary-task:last-child{
+border-bottom:none;
+}
+
+.summary-task .edit-btn,
+.summary-task .delete-btn{
+padding:6px 10px;
+font-size:12px;
 }

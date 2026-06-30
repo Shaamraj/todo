@@ -38,6 +38,31 @@ export default function Dashboard() {
       ? "#f59e0b"
       : "#2563eb"
   }));
+  const todayTasks = tasks.filter(task =>
+      !task.completed &&
+      task.dueDate &&
+      new Date(task.dueDate).toDateString() ===
+        new Date().toDateString()
+    );
+
+    const overdueTasks = tasks.filter(task =>
+      !task.completed &&
+      task.dueDate &&
+      new Date(task.dueDate) < new Date()
+    );
+
+    const nextWeekTasks = tasks.filter(task => {
+      if (!task.dueDate || task.completed) return false;
+
+      const due = new Date(task.dueDate);
+
+      const today = new Date();
+
+      const week = new Date();
+      week.setDate(today.getDate() + 7);
+
+      return due > today && due <= week;
+    });
   const now = new Date();
 
   now.setMinutes(now.getMinutes() + 5);
@@ -279,17 +304,148 @@ export default function Dashboard() {
   </div>
 
   <div className="stat-card">
-    <div className="stat-number">
-      {
-        tasks.filter(
-          task => task.completed
-        ).length
-      }
-    </div>
-    <div className="stat-label">
-      Completed
-    </div>
-  </div>
+          <div className="stat-number">
+            {
+              tasks.filter(
+                task => task.completed
+              ).length
+            }
+          </div>
+          <div className="stat-label">
+            Completed
+          </div>
+        </div>
+        <div className="summary-container">
+
+      <div className="summary-box">
+      <h3>📌 Today</h3>
+
+      {todayTasks.map(task=>(
+      <div className="summary-task" key={task._id}>
+
+      <span>{task.text}</span>
+
+      <div>
+
+      <button
+      className="edit-btn"
+      onClick={()=>{
+      setEditId(task._id);
+      setEditText(task.text);
+      setEditDueDate(
+      task.dueDate
+      ? new Date(task.dueDate)
+      .toLocaleString("sv-SE")
+      .replace(" ","T")
+      .slice(0,16)
+      : ""
+      );
+      }}
+      >
+      Edit
+      </button>
+
+      <button
+      className="delete-btn"
+      onClick={()=>deleteTask(task._id)}
+      >
+      Delete
+      </button>
+
+      </div>
+
+      </div>
+      ))}
+
+      </div>
+
+      <div className="summary-box">
+
+      <h3>⚠️ Overdue</h3>
+
+      {overdueTasks.map(task=>(
+      <div className="summary-task" key={task._id}>
+
+      <span>{task.text}</span>
+
+      <div>
+
+      <button
+      className="edit-btn"
+      onClick={()=>{
+      setEditId(task._id);
+      setEditText(task.text);
+      setEditDueDate(
+      task.dueDate
+      ? new Date(task.dueDate)
+      .toLocaleString("sv-SE")
+      .replace(" ","T")
+      .slice(0,16)
+      : ""
+      );
+      }}
+      >
+      Edit
+      </button>
+
+      <button
+      className="delete-btn"
+      onClick={()=>deleteTask(task._id)}
+      >
+      Delete
+      </button>
+
+      </div>
+
+      </div>
+      ))}
+
+      </div>
+
+      <div className="summary-box">
+
+      <h3>⏳ Next 7 Days</h3>
+
+      {nextWeekTasks.map(task=>(
+      <div className="summary-task" key={task._id}>
+
+      <span>{task.text}</span>
+
+      <div>
+
+      <button
+      className="edit-btn"
+      onClick={()=>{
+      setEditId(task._id);
+      setEditText(task.text);
+      setEditDueDate(
+      task.dueDate
+      ? new Date(task.dueDate)
+      .toLocaleString("sv-SE")
+      .replace(" ","T")
+      .slice(0,16)
+      : ""
+      );
+      }}
+      >
+      Edit
+      </button>
+
+      <button
+      className="delete-btn"
+      onClick={()=>deleteTask(task._id)}
+      >
+      Delete
+      </button>
+
+      </div>
+
+      </div>
+      ))}
+
+      </div>
+
+</div>
   <div className="search-box">
   <input
     type="text"
@@ -526,6 +682,29 @@ export default function Dashboard() {
             }}
 
             events={events}
+
+            eventClick={(info)=>{
+
+                    const task=tasks.find(
+                    t=>t._id===info.event.id
+                    );
+
+                    if(!task) return;
+
+                    setEditId(task._id);
+
+                    setEditText(task.text);
+
+                    setEditDueDate(
+                    task.dueDate
+                    ? new Date(task.dueDate)
+                    .toLocaleString("sv-SE")
+                    .replace(" ","T")
+                    .slice(0,16)
+                    : ""
+                    );
+
+                    }}
 
             editable={false}
 
