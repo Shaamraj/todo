@@ -514,29 +514,17 @@ export default function Dashboard() {
           startAccessor="start"
           endAccessor="end"
 
-          eeventPropGetter={(event) => {
-            let background = "#2563eb"; // Default Blue
+          eventPropGetter={(event) => {
+              console.log(event);
 
-            if (event.resource.completed) {
-              background = "#22c55e"; // Green
-            } else if (event.resource.overdue) {
-              background = "#ef4444"; // Red
-            } else if (
-              new Date(event.resource.dueDate).toDateString() ===
-              new Date().toDateString()
-            ) {
-              background = "#f59e0b"; // Orange
-            }
-
-            return {
-              style: {
-                backgroundColor: background,
-                color: "white",
-                border: "none",
-                borderRadius: "6px"
-              }
-            };
-          }}
+              return {
+                style: {
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none"
+                }
+              };
+            }}
 
           style={{ height: 700 }}
         />
