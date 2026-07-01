@@ -252,28 +252,7 @@ export default function Dashboard() {
 
     return () => clearInterval(interval);
   }, []);
-  const todayTasks = tasks.filter(task =>
-  task.dueDate &&
-  !task.completed &&
-  new Date(task.dueDate).toDateString() === new Date().toDateString()
-);
-
-const overdueTasks = tasks.filter(task =>
-  task.dueDate &&
-  !task.completed &&
-  new Date(task.dueDate) < new Date()
-);
-
-const nextWeekTasks = tasks.filter(task => {
-  if (!task.dueDate || task.completed) return false;
-
-  const due = new Date(task.dueDate);
-  const now = new Date();
-  const week = new Date(now);
-  week.setDate(now.getDate() + 7);
-
-  return due > now && due <= week;
-});
+  
   return (
     <div className="dashboard-container">
       {/* TOP BAR */}
