@@ -338,9 +338,11 @@ gap:20px;
 
 .summary-box{
 background:white;
-padding:18px;
 border-radius:12px;
-box-shadow:0 2px 10px rgba(0,0,0,.08);
+padding:15px;
+height:230px;
+overflow-y:auto;
+box-shadow:0px 2px 10px rgba(0,0,0,0.08);
 }
 
 .summary-box h3{
