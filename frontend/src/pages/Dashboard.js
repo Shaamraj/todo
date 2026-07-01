@@ -252,6 +252,28 @@ export default function Dashboard() {
 
     return () => clearInterval(interval);
   }, []);
+  const todayTasks = tasks.filter(task =>
+  task.dueDate &&
+  !task.completed &&
+  new Date(task.dueDate).toDateString() === new Date().toDateString()
+);
+
+const overdueTasks = tasks.filter(task =>
+  task.dueDate &&
+  !task.completed &&
+  new Date(task.dueDate) < new Date()
+);
+
+const nextWeekTasks = tasks.filter(task => {
+  if (!task.dueDate || task.completed) return false;
+
+  const due = new Date(task.dueDate);
+  const now = new Date();
+  const week = new Date(now);
+  week.setDate(now.getDate() + 7);
+
+  return due > now && due <= week;
+});
   return (
     <div className="dashboard-container">
       {/* TOP BAR */}
@@ -315,135 +337,7 @@ export default function Dashboard() {
             Completed
           </div>
         </div>
-        <div className="summary-container">
-
-      <div className="summary-box">
-      <h3>📌 Today</h3>
-
-      {todayTasks.map(task=>(
-      <div className="summary-task" key={task._id}>
-
-      <span>{task.text}</span>
-
-      <div>
-
-      <button
-      className="edit-btn"
-      onClick={()=>{
-      setEditId(task._id);
-      setEditText(task.text);
-      setEditDueDate(
-      task.dueDate
-      ? new Date(task.dueDate)
-      .toLocaleString("sv-SE")
-      .replace(" ","T")
-      .slice(0,16)
-      : ""
-      );
-      }}
-      >
-      Edit
-      </button>
-
-      <button
-      className="delete-btn"
-      onClick={()=>deleteTask(task._id)}
-      >
-      Delete
-      </button>
-
-      </div>
-
-      </div>
-      ))}
-
-      </div>
-
-      <div className="summary-box">
-
-      <h3>⚠️ Overdue</h3>
-
-      {overdueTasks.map(task=>(
-      <div className="summary-task" key={task._id}>
-
-      <span>{task.text}</span>
-
-      <div>
-
-      <button
-      className="edit-btn"
-      onClick={()=>{
-      setEditId(task._id);
-      setEditText(task.text);
-      setEditDueDate(
-      task.dueDate
-      ? new Date(task.dueDate)
-      .toLocaleString("sv-SE")
-      .replace(" ","T")
-      .slice(0,16)
-      : ""
-      );
-      }}
-      >
-      Edit
-      </button>
-
-      <button
-      className="delete-btn"
-      onClick={()=>deleteTask(task._id)}
-      >
-      Delete
-      </button>
-
-      </div>
-
-      </div>
-      ))}
-
-      </div>
-
-      <div className="summary-box">
-
-      <h3>⏳ Next 7 Days</h3>
-
-      {nextWeekTasks.map(task=>(
-      <div className="summary-task" key={task._id}>
-
-      <span>{task.text}</span>
-
-      <div>
-
-      <button
-      className="edit-btn"
-      onClick={()=>{
-      setEditId(task._id);
-      setEditText(task.text);
-      setEditDueDate(
-      task.dueDate
-      ? new Date(task.dueDate)
-      .toLocaleString("sv-SE")
-      .replace(" ","T")
-      .slice(0,16)
-      : ""
-      );
-      }}
-      >
-      Edit
-      </button>
-
-      <button
-      className="delete-btn"
-      onClick={()=>deleteTask(task._id)}
-      >
-      Delete
-      </button>
-
-      </div>
-
-      </div>
-      ))}
-
-      </div>
+   
 
 </div>
   <div className="search-box">
@@ -461,7 +355,7 @@ export default function Dashboard() {
   <button onClick={() => setFilter("today")}>Today</button>
   <button onClick={() => setFilter("overdue")}>Overdue</button>
 </div>
-</div>
+
       {/* INPUT SECTION */}
       <div className="task-input-box">
         <input
@@ -486,6 +380,160 @@ export default function Dashboard() {
           Add Task
         </button>
       </div>
+      <div className="stats-container">
+
+  <div className="stat-card">
+    <div className="stat-number">{tasks.length}</div>
+    <div className="stat-label">Total Tasks</div>
+  </div>
+
+  <div className="stat-card">
+    <div className="stat-number">
+      {tasks.filter(task => !task.completed).length}
+    </div>
+    <div className="stat-label">Pending</div>
+  </div>
+
+  <div className="stat-card">
+    <div className="stat-number">
+      {tasks.filter(task => task.completed).length}
+    </div>
+    <div className="stat-label">Completed</div>
+  </div>
+
+  <div className="search-box">
+    <input
+      type="text"
+      placeholder="🔍 Search tasks..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+    />
+  </div>
+
+  <div className="filter-buttons">
+    <button onClick={() => setFilter("all")}>All</button>
+    <button onClick={() => setFilter("pending")}>Pending</button>
+    <button onClick={() => setFilter("completed")}>Completed</button>
+    <button onClick={() => setFilter("today")}>Today</button>
+    <button onClick={() => setFilter("overdue")}>Overdue</button>
+  </div>
+
+</div>
+
+<div className="summary-container">
+
+  <div className="summary-box">
+    <h3>📌 Today</h3>
+
+    {todayTasks.map(task => (
+      <div className="summary-task" key={task._id}>
+        <span>{task.text}</span>
+
+        <div>
+          <button
+            className="edit-btn"
+            onClick={() => {
+              setEditId(task._id);
+              setEditText(task.text);
+              setEditDueDate(
+                task.dueDate
+                  ? new Date(task.dueDate)
+                      .toLocaleString("sv-SE")
+                      .replace(" ", "T")
+                      .slice(0, 16)
+                  : ""
+              );
+            }}
+          >
+            Edit
+          </button>
+
+          <button
+            className="delete-btn"
+            onClick={() => deleteTask(task._id)}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div className="summary-box">
+    <h3>⚠️ Overdue</h3>
+
+    {overdueTasks.map(task => (
+      <div className="summary-task" key={task._id}>
+        <span>{task.text}</span>
+
+        <div>
+          <button
+            className="edit-btn"
+            onClick={() => {
+              setEditId(task._id);
+              setEditText(task.text);
+              setEditDueDate(
+                task.dueDate
+                  ? new Date(task.dueDate)
+                      .toLocaleString("sv-SE")
+                      .replace(" ", "T")
+                      .slice(0, 16)
+                  : ""
+              );
+            }}
+          >
+            Edit
+          </button>
+
+          <button
+            className="delete-btn"
+            onClick={() => deleteTask(task._id)}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div className="summary-box">
+    <h3>⏳ Next 7 Days</h3>
+
+    {nextWeekTasks.map(task => (
+      <div className="summary-task" key={task._id}>
+        <span>{task.text}</span>
+
+        <div>
+          <button
+            className="edit-btn"
+            onClick={() => {
+              setEditId(task._id);
+              setEditText(task.text);
+              setEditDueDate(
+                task.dueDate
+                  ? new Date(task.dueDate)
+                      .toLocaleString("sv-SE")
+                      .replace(" ", "T")
+                      .slice(0, 16)
+                  : ""
+              );
+            }}
+          >
+            Edit
+          </button>
+
+          <button
+            className="delete-btn"
+            onClick={() => deleteTask(task._id)}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+
+</div>
 
       {/* TASKS */}
       <div className="dashboard-content">
