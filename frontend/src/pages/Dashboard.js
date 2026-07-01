@@ -280,60 +280,7 @@ export default function Dashboard() {
           Logout
         </button>
       </div>
-<div className="stats-container">
 
-  <div className="stat-card">
-    <div className="stat-number">
-      {tasks.length}
-    </div>
-    <div className="stat-label">
-      Total Tasks
-    </div>
-  </div>
-
-  <div className="stat-card">
-    <div className="stat-number">
-      {
-        tasks.filter(
-          task => !task.completed
-        ).length
-      }
-    </div>
-    <div className="stat-label">
-      Pending
-    </div>
-  </div>
-
-  <div className="stat-card">
-          <div className="stat-number">
-            {
-              tasks.filter(
-                task => task.completed
-              ).length
-            }
-          </div>
-          <div className="stat-label">
-            Completed
-          </div>
-        </div>
-   
-
-</div>
-  <div className="search-box">
-  <input
-    type="text"
-    placeholder="🔍 Search tasks..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
-</div>
-  <div className="filter-buttons">
-  <button onClick={() => setFilter("all")}>All</button>
-  <button onClick={() => setFilter("pending")}>Pending</button>
-  <button onClick={() => setFilter("completed")}>Completed</button>
-  <button onClick={() => setFilter("today")}>Today</button>
-  <button onClick={() => setFilter("overdue")}>Overdue</button>
-</div>
 
       {/* INPUT SECTION */}
       <div className="task-input-box">
