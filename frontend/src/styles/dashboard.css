@@ -373,11 +373,12 @@ align-items:center;
 gap:20px;
 }
 .search-box{
-width:350px;
+  width:320px;
+  margin-left:auto;
 }
 
 .search-box input{
-width:100%;
+width:320px;
 padding:12px 18px;
 font-size:15px;
 border-radius:10px;
