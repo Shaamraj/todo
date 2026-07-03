@@ -9,6 +9,8 @@ export default function Dashboard() {
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 10;
   const [dueDate, setDueDate] = useState("");
 
   const [editId, setEditId] = useState(null);
@@ -63,6 +65,43 @@ export default function Dashboard() {
 
       return due > today && due <= week;
     });
+    const filteredTasks = tasks
+  .filter(task =>
+    task.text.toLowerCase().includes(search.toLowerCase())
+  )
+  .filter(task => {
+    if (filter === "pending") return !task.completed;
+    if (filter === "completed") return task.completed;
+
+    if (filter === "overdue")
+      return (
+        task.dueDate &&
+        !task.completed &&
+        new Date(task.dueDate) < new Date()
+      );
+
+    if (filter === "today") {
+      if (!task.dueDate) return false;
+
+      return (
+        new Date(task.dueDate).toDateString() ===
+        new Date().toDateString()
+      );
+    }
+
+    return true;
+  });
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+
+   const currentTasks = filteredTasks.slice(
+    indexOfFirstTask,
+    indexOfLastTask
+  );
+
+  const totalPages = Math.ceil(
+     filteredTasks.length / tasksPerPage
+  );
   const now = new Date();
 
   now.setMinutes(now.getMinutes() + 5);
@@ -256,30 +295,43 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       {/* TOP BAR */}
-      <div className="top-bar">
-        <div>
-          <h1>
-            Welcome, {userName}
-          </h1>
+     <div className="top-bar">
 
-         <p
-            style={{
-              color: "white",
-              margin: "5px 0 0 0",
-              fontSize: "14px"
-            }}
-          >
-            Current Time: {currentTime}
-          </p>
-        </div>
+  <div>
+    <h1>Welcome, {userName}</h1>
 
-        <button
-          className="logout-btn"
-          onClick={logout}
-        >
-          Logout
-        </button>
-      </div>
+    <p
+      style={{
+        color: "white",
+        margin: "5px 0 0 0",
+        fontSize: "14px"
+      }}
+    >
+      Current Time: {currentTime}
+    </p>
+  </div>
+
+  <div className="top-right">
+
+    <div className="search-box">
+      <input
+        type="text"
+        placeholder="🔍 Search tasks..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+    </div>
+
+    <button
+      className="logout-btn"
+      onClick={logout}
+    >
+      Logout
+    </button>
+
+  </div>
+
+</div>
 
 
       {/* INPUT SECTION */}
@@ -325,23 +377,6 @@ export default function Dashboard() {
       {tasks.filter(task => task.completed).length}
     </div>
     <div className="stat-label">Completed</div>
-  </div>
-
-  <div className="search-box">
-    <input
-      type="text"
-      placeholder="🔍 Search tasks..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-    />
-  </div>
-
-  <div className="filter-buttons">
-    <button onClick={() => setFilter("all")}>All</button>
-    <button onClick={() => setFilter("pending")}>Pending</button>
-    <button onClick={() => setFilter("completed")}>Completed</button>
-    <button onClick={() => setFilter("today")}>Today</button>
-    <button onClick={() => setFilter("overdue")}>Overdue</button>
   </div>
 
 </div>
@@ -463,40 +498,24 @@ export default function Dashboard() {
 
       {/* TASKS */}
       <div className="dashboard-content">
-        <div className="tasks-side">
-          <div className="tasks-container">
+       <div className="tasks-side">
+
+      <div className="filter-buttons">
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("pending")}>Pending</button>
+        <button onClick={() => setFilter("completed")}>Completed</button>
+        <button onClick={() => setFilter("today")}>Today</button>
+        <button onClick={() => setFilter("overdue")}>Overdue</button>
+      </div>
+
+     <div className="tasks-container">
         {tasks.length === 0 ? (
           <p className="empty-text">
             No tasks added yet
           </p>
         ) : (
-          tasks
-            .filter(task =>
-              task.text.toLowerCase().includes(search.toLowerCase())
-            )
-            .filter(task => {
-              if (filter === "pending") return !task.completed;
-              if (filter === "completed") return task.completed;
-
-              if (filter === "overdue")
-                return task.dueDate &&
-                  !task.completed &&
-                  new Date(task.dueDate) < new Date();
-
-              if (filter === "today") {
-                if (!task.dueDate) return false;
-
-                const today = new Date();
-                const due = new Date(task.dueDate);
-
-                return (
-                  today.toDateString() === due.toDateString()
-                );
-              }
-
-              return true;
-            })
-              .map((task) => {
+         
+              currentTasks.map((task) => {
                 const isOverdue =
                   task.dueDate &&
                   !task.completed &&
@@ -635,8 +654,31 @@ export default function Dashboard() {
               </div>
             );
           })
-        )}
-            </div>
+                )}
+      </div>
+
+      <div className="pagination">
+
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(currentPage - 1)}
+        >
+          Previous
+        </button>
+
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(currentPage + 1)}
+        >
+          Next
+        </button>
+
+      </div>
+
     </div>
 
     <div className="calendar-container">
