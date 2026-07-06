@@ -313,14 +313,6 @@ export default function Dashboard() {
 
   <div className="top-right">
 
-    <div className="search-box">
-      <input
-        type="text"
-        placeholder="🔍 Search tasks..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </div>
 
     <button
       className="logout-btn"
@@ -506,6 +498,16 @@ export default function Dashboard() {
         <button onClick={() => setFilter("completed")}>Completed</button>
         <button onClick={() => setFilter("today")}>Today</button>
         <button onClick={() => setFilter("overdue")}>Overdue</button>
+
+        
+    <div className="search-box">
+      <input
+        type="text"
+        placeholder="🔍 Search tasks..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+    </div>
       </div>
 
      <div className="tasks-container">
